@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  url: MyString
+  title: MyString
+  category: MyString
+  published: 2014-10-10
+  access: 1
+  comments_count: 1
+  losed: false
+
+two:
+  url: MyString
+  title: MyString
+  category: MyString
+  published: 2014-10-10
+  access: 1
+  comments_count: 1
+  losed: false

@@ -1,0 +1,13 @@
+[global]
+ApplicationName=split-sinatra-example
+DevToolsEndpoint=git.elasticbeanstalk.ap-northeast-1.amazonaws.com
+EnvironmentName=production
+EnvironmentTier=WebServer::Standard::1.0
+EnvironmentType=SingleInstance
+InstanceProfileName=aws-elasticbeanstalk-ec2-role
+OptionSettingFile=/Users/k2works/projects/github/aws_elasticbeanstalk_introduction/split-sinatra-example/.elasticbeanstalk/optionsettings.production
+RdsEnabled=No
+Region=ap-northeast-1
+ServiceEndpoint=https://elasticbeanstalk.ap-northeast-1.amazonaws.com
+SolutionStack=64bit Amazon Linux 2014.03 v1.0.7 running Ruby 2.1 (Puma)
+
