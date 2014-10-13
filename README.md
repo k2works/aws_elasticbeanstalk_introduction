@@ -432,6 +432,40 @@ _http://localhost:9292/_
 
 ### RDS対応セットアップ
 
+_fooapp_rds/fooapp_rds.rb_から`set :database, {adapter: "sqlite3", database: "foo.sqlite3"}`を削除
+
+_fooapp_rds/config/database.yml_作成
+
+```
+production:
+  adapter: mysql2
+  encoding: utf8
+  database: <%= ENV['RDS_DB_NAME'] %>
+  username: <%= ENV['RDS_USERNAME'] %>
+  password: <%= ENV['RDS_PASSWORD'] %>
+  host: <%= ENV['RDS_HOSTNAME'] %>
+  port: <%= ENV['RDS_PORT'] %>
+
+development:
+  adapter: sqlite3
+  database: db/development.sqlite3
+  pool: 5
+  timeout: 5000
+
+test:
+  adapter: sqlite3
+  database: db/test.sqlite3
+  pool: 5
+  timeout: 5000
+```
+
+_fooapp_rds/Gemfile_編集
+
+```ruby
+gem "sqlite3", :group => [:development,:test]
+gem "mysql", :group => :production
+```
+
 ## <a name="5">Ruby での VPC の使用</a>
 
 # 参照

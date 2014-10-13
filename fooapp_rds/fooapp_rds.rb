@@ -6,7 +6,6 @@ end
 
 class FooappRds < Sinatra::Base
   register Sinatra::ActiveRecordExtension
-  set :database, {adapter: "sqlite3", database: "foo.sqlite3"}
   set :public_folder => "public", :static => true
 
   get "/" do

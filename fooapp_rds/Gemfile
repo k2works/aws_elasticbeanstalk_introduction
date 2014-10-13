@@ -3,7 +3,8 @@ source "https://rubygems.org/"
 # App Stack
 gem "sinatra", "~> 1.4"
 gem "sinatra-activerecord"
-gem "sqlite3"
+gem "sqlite3", :group => [:development,:test]
+gem "mysql", :group => :production
 
 group :development do
   gem "rake", "~> 10.0"
