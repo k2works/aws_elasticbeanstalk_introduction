@@ -287,6 +287,151 @@ $ eb start
 ```
 
 ## <a name="4">Ruby での Amazon RDS の使用</a>
+
+### セットアップ
+```bash
+$ hazel fooapp_rds
+$ cd fooapp_rds
+```
+### sinatra-activerecordセットアップ
+_fooapp_rds/Gemfile_
+```ruby
+gem "sinatra-activerecord"
+gem "sqlite3"
+```
+
+_fooapp_rds/fooapp_rds.rb_
+```ruby
+require "sinatra/activerecord"
+
+class FooappRds < Sinatra::Base
+  register Sinatra::ActiveRecordExtension
+  set :database, {adapter: "sqlite3", database: "foo.sqlite3"}
+  set :public_folder => "public", :static => true
+
+  get "/" do
+    erb :welcome
+  end
+end
+```
+_fooapp_rds/Rakefile_
+
+```ruby
+require "sinatra/activerecord/rake"
+
+namespace :db do
+  task :load_config do
+    require "./fooapp_rds"
+  end
+end
+```
+
+```bash
+$ bundle
+$ rake -T
+```
+
+### データベース作成
+```bash
+$ rake db:create_migration NAME=create_users
+db/migrate/20141013044321_create_users.rb
+```
+
+_fooapp_rds/db/migrate/20141013044321_create_users.rb_
+
+```ruby
+class CreateUsers < ActiveRecord::Migration
+  def change
+      create_table :users do |t|
+      t.string :name
+    end
+  end
+end
+```
+
+```bash
+$ rake db:migrate
+== 20141013044321 CreateUsers: migrating ======================================
+-- create_table(:users)
+   -> 0.0024s
+== 20141013044321 CreateUsers: migrated (0.0026s) =============================
+```
+
+### モデルを作成
+_fooapp_rds/fooapp_rds.rb_
+```ruby
+class User < ActiveRecord::Base
+  validates_presence_of :name
+end
+```
+
+### データアクセスロジック作成
+```ruby
+get '/users' do
+  @users = User.all
+  erb :welcome
+end
+
+get '/users/:id' do
+  @user = User.find(params[:id])
+  erb :welcome
+end
+```
+
+### 実行環境の整備
+_fooapp_rds/Gemfile_
+
+```ruby
+gem 'guard-shotgun', :git => 'https://github.com/rchampourlier/guard-shotgun.git'
+gem "rack-livereload"
+gem 'guard-livereload', require: false
+```
+
+_fooapp_rds/config.ru_
+
+```ruby
+# Rack LiveReload
+require 'rack-livereload'
+use Rack::LiveReload
+```
+
+```bash
+$ bundle
+$ guard init shotgun
+$ guard init livereload
+```
+
+_fooapp_rds/Guardfile_
+
+```ruby
+group :server do
+  guard :shotgun do
+    watch(/.+/) # watch *every* file in the directory
+  end
+end
+
+guard 'livereload' do
+  watch(%r{views/.+\.(erb|haml|slim)$})
+  watch(%r{fooapp_rds.rb})
+end
+```
+
+```
+$ guard
+14:00:14 - INFO - Guard is using TerminalTitle to send notifications.
+14:00:14 - INFO - LiveReload is waiting for a browser to connect.
+14:00:14 - INFO - Starting up Rack...
+[2014-10-13 14:00:16] INFO  WEBrick 1.3.1
+[2014-10-13 14:00:16] INFO  ruby 2.1.1 (2014-02-24) [x86_64-darwin12.0]
+[2014-10-13 14:00:16] INFO  WEBrick::HTTPServer#start: pid=4927 port=9292
+
+14:00:16 - INFO - Guard is now watching at '/Users/k2works/projects/github/aws_elasticbeanstalk_introduction/fooapp_rds'
+```
+
+_http://localhost:9292/_
+
+### RDS対応セットアップ
+
 ## <a name="5">Ruby での VPC の使用</a>
 
 # 参照
@@ -295,3 +440,7 @@ $ eb start
 * [Hazel](http://c7.github.io/hazel/)
 * [is not checked out… bundle install does NOT fix help!](http://stackoverflow.com/questions/6648870/is-not-checked-out-bundle-install-does-not-fix-help)
 * [RDS付きのBeanstalkを使う際の注意点](http://blog.serverworks.co.jp/tech/2013/03/12/rds_on_beanstalk/)
+* [Sinatra ActiveRecord Extension](https://github.com/janko-m/sinatra-activerecord)
+* [Rack::LiveReload](https://github.com/johnbintz/rack-livereload)
+* [Guard::Shotgun](https://github.com/rchampourlier/guard-shotgun)
+* [Guard::LiveReload](https://github.com/guard/guard-livereload)
