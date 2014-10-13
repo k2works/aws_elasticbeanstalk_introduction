@@ -4,13 +4,13 @@ source "https://rubygems.org/"
 gem "sinatra", "~> 1.4"
 gem "sinatra-activerecord"
 gem "sqlite3", :group => [:development,:test]
-gem "mysql", :group => :production
+gem "mysql2", :group => :production
+gem "rack-livereload"
 
 group :development do
   gem "rake", "~> 10.0"
   gem "minitest", "~> 5.2"
   gem "rack-test", "~> 0.6"
   gem 'guard-shotgun', :git => 'https://github.com/rchampourlier/guard-shotgun.git'
-  gem "rack-livereload"
   gem 'guard-livereload', require: false
 end

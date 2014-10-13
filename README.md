@@ -466,6 +466,42 @@ gem "sqlite3", :group => [:development,:test]
 gem "mysql", :group => :production
 ```
 
+```bash
+$ eb init
+・・・
+Create an RDS DB Instance? [y/n] (current value is "Yes"):
+・・・
+$ eb start
+```
+
+### デプロイコマンドの定義
+_fooapp_rds/.ebextensions_
+
+```
+packages:
+  yum:
+    git: []
+container_commands:
+  bundle_install:
+    command: bundle install --deployment
+container_commands:
+  01-bundle_install:
+    command: bundle install --deployment
+  02-db_migrate:
+    command: bundle exec rake db:migrate
+  03-chown:
+    command: chown -R webapp:webapp ./
+```
+
+_fooapp_rds/config/initializers/.gitkeep_に追加
+
+```bash
+$ git add . && git commit -m "Add deploy setting"
+$ git aws.push
+```
+
+その他DB設定は[RDS付きのBeanstalkを使う際の注意点](http://blog.serverworks.co.jp/tech/2013/03/12/rds_on_beanstalk/)参照
+
 ## <a name="5">Ruby での VPC の使用</a>
 
 # 参照
