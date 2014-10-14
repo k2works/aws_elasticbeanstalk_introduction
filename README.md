@@ -643,6 +643,10 @@ $ eb stop
 $ eb delete
 ```
 
+CloudFormationで構築したVPCも削除する
+
+![014](https://farm4.staticflickr.com/3951/15345805998_1d953c4603.jpg)
+
 # 参照
 
 * [AWS Elastic Beanstalk](http://docs.aws.amazon.com/ja_jp/elasticbeanstalk/latest/dg/Welcome.html)
