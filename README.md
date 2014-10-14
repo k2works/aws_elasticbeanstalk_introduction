@@ -1,6 +1,8 @@
 AWS Elastic Beanstalk入門
 ===
 # 目的
+AWS Elastic Beanstalkの使用方法を修得する。
+
 # 前提
 | ソフトウェア     | バージョン    | 備考         |
 |:---------------|:-------------|:------------|
@@ -503,6 +505,143 @@ $ git aws.push
 その他DB設定は[RDS付きのBeanstalkを使う際の注意点](http://blog.serverworks.co.jp/tech/2013/03/12/rds_on_beanstalk/)参照
 
 ## <a name="5">Ruby での VPC の使用</a>
+### VPC環境セットアップ
+[AWS CloudFormation](http://aws.amazon.com/jp/cloudformation/)を使ってVPC環境をセットアップする。
+
+_cloudformeer.template.fooapp_vpc.json_
+
+### デプロイ環境構築
+#### セットアップ
+```bash
+$ git init && git add -A && git commit -m "Initial commit"
+$ eb init
+```
+
+#### AWSコンソールで環境セットアップ
+![001](https://farm4.staticflickr.com/3952/15345959980_7ec9078d2d.jpg)
+
+![002](https://farm4.staticflickr.com/3954/15345959930_ba13218111.jpg)
+
+![003](https://farm4.staticflickr.com/3939/15345582417_fef0796d03.jpg)
+
+![004](https://farm4.staticflickr.com/3953/15345448648_bee8d05313.jpg)
+
+![005](https://farm6.staticflickr.com/5598/15345582507_693fc39e87.jpg)
+
+![006](https://farm6.staticflickr.com/5597/15345448658_ac2504972d.jpg)
+
+![007](https://farm6.staticflickr.com/5609/14910849794_2bd6a1df05.jpg)
+
+![008](https://farm4.staticflickr.com/3938/15528895191_db40f01465.jpg)
+
+![009](https://farm6.staticflickr.com/5598/15345448698_803a3cdfb3.jpg)
+
+![010](https://farm6.staticflickr.com/5614/14911423733_c8ee53e66d.jpg)
+
+![011](https://farm6.staticflickr.com/5602/15345959830_46234ca63e.jpg)
+
+#### ローカルレポジトリとマッピング
+```bash
+$ eb branch
+The current branch is "master".
+Enter an AWS Elastic Beanstalk environment name (auto-generated value is "fooappvpc-master-env"): fooappVpc-env
+Do you want to copy the settings from environment "production" for the new branch? [y/n]: y
+Updated AWS Credential file at "/Users/k2works/.elasticbeanstalk/aws_credential_file".
+$ eb start
+Starting application "fooapp_vpc".
+Some of your option settings are ignored because they don't apply to your environment type.
+Environment "fooappVpc-env" already exists. Skipped creating.
+Application is available at "production-fooappVpc-env.elasticbeanstalk.com".
+```
+
+### アプリケーションセットアップ
+#### アプリケーション作成
+```bash
+$ rails new fooapp_vpc
+$ cd fooapp_vpc
+$ rails g scaffold article url:string title:string category:string published:date access:integer comments_count:integer losed:boolean
+$ rake db:migrate
+```
+
+#### シークレットキーを環境変数に追加
+```bash
+$ rake secret
+ea0f4840d6c3933cf1bab33ad45128a2c543fd1fac229411b5b81cdc7d71821b6c4f832613cd3bc6d8203f16e65521f41574fe446873f7c3956f17d9b72ef905
+```
+_fooapp_vpc/.elasticbeanstalk/optionsettings.production_
+
+```
+・・・
+[aws:elasticbeanstalk:application:environment]
+BUNDLE_WITHOUT=test:development
+PARAM1=
+PARAM2=
+PARAM3=
+PARAM4=
+PARAM5=
+RACK_ENV=production
+RAILS_SKIP_ASSET_COMPILATION=false
+RAILS_SKIP_MIGRATIONS=false
+SECRET_KEY_BASE=ea0f4840d6c3933cf1bab33ad45128a2c543fd1fac229411b5b81cdc7d71821b6c4f832613cd3bc6d8203f16e65521f41574fe446873f7c3956f17d9b72ef905
+・・・
+```
+
+#### データベースの設定
+
+_fooapp_vpc/Gemfile_
+
+```ruby
+gem 'sqlite3', group: [:development,:test]
+gem 'mysql2', group: :production
+```
+
+_fooapp_vpc/config/database.yml_
+
+```yml
+・・・
+production:
+  adapter: mysql2
+  encoding: utf8
+  database: <%= ENV['RDS_DB_NAME'] %>
+  username: <%= ENV['RDS_USERNAME'] %>
+  password: <%= ENV['RDS_PASSWORD'] %>
+  host: <%= ENV['RDS_HOSTNAME'] %>
+  port: <%= ENV['RDS_PORT'] %>
+・・・
+```
+
+#### タイムゾーンの設定
+
+_config/application.rb_
+
+```
+config.time_zone = 'Tokyo'
+```
+
+#### ルーティングの設定
+_fooapp/config/routes.rb_
+
+```ruby
+root 'articles#index'
+```
+
+### アプリケーションデプロイ
+```bash
+$ git add -A && git commit -m "Application Setup"
+$ eb update
+$ eb push
+```
+### アプリケーション動作確認
+
+![012](https://farm4.staticflickr.com/3941/14910849964_c61d06d23e.jpg)
+
+![013](https://farm6.staticflickr.com/5616/14911423623_e89e9e0b4d.jpg)
+
+### 後片付け
+```bash
+$ eb stop
+$ eb delete
+```
 
 # 参照
 
@@ -514,3 +653,4 @@ $ git aws.push
 * [Rack::LiveReload](https://github.com/johnbintz/rack-livereload)
 * [Guard::Shotgun](https://github.com/rchampourlier/guard-shotgun)
 * [Guard::LiveReload](https://github.com/guard/guard-livereload)
+* [Deploying a Git Branch to a Specific Environment](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-reference-branch-environment.html)

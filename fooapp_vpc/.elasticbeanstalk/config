@@ -1,0 +1,30 @@
+[global]
+ApplicationName=fooapp_vpc
+AwsCredentialFile=/Users/k2works/.elasticbeanstalk/aws_credential_file
+DevToolsEndpoint=git.elasticbeanstalk.ap-northeast-1.amazonaws.com
+EnvironmentName=fooappVpc-env
+EnvironmentTier=WebServer::Standard::1.0
+EnvironmentType=SingleInstance
+InstanceProfileName=aws-elasticbeanstalk-ec2-role
+OptionSettingFile=/Users/k2works/projects/github/aws_elasticbeanstalk_introduction/fooapp_vpc/.elasticbeanstalk/optionsettings.fooappVpc-env
+RdsDeletionPolicy=Snapshot
+RdsEnabled=Yes
+RdsSourceSnapshotName=
+Region=ap-northeast-1
+ServiceEndpoint=https://elasticbeanstalk.ap-northeast-1.amazonaws.com
+SolutionStack=64bit Amazon Linux 2014.03 v1.0.7 running Ruby 2.1 (Puma)
+
+[branches]
+master=fooappVpc-env
+
+[branch:master]
+ApplicationVersionName=Sample Application
+EnvironmentName=fooappVpc-env
+EnvironmentTier=WebServer::Standard::1.0
+EnvironmentType=SingleInstance
+InstanceProfileName=aws-elasticbeanstalk-ec2-role
+OptionSettingFile=/Users/k2works/projects/github/aws_elasticbeanstalk_introduction/fooapp_vpc/.elasticbeanstalk/optionsettings.fooappVpc-env
+RdsDeletionPolicy=Snapshot
+RdsEnabled=Yes
+RdsSourceSnapshotName=
+
