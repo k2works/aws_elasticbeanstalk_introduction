@@ -39,6 +39,7 @@ _fooapp_
 ```bash
 $ wget https://s3.amazonaws.com/elasticbeanstalk/cli/AWS-ElasticBeanstalk-CLI-2.6.3.zip
 $ cp -r AWS-ElasticBeanstalk-CLI-2.6.3/AWSDevTools /usr/local/
+$ bash /usr/local/AWSDevTools/Linux/AWSDevTools-RepositorySetup.sh 
 ```
 
 ### botoセットアップ
